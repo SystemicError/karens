@@ -67,3 +67,25 @@
         ]
     entries))
 
+(defn prob-birth-decade
+  "Give the probability that someone was born in a given decade, using only their sex as evidence."
+  [age-histogram decade sex]
+  (let [; add up number of people with their decade and sex in the histogram 
+        index (* 2 (- 201 (/ decade 10)))
+        pentades (take 2 (drop index age-histogram))
+        decaders (if (= sex "male")
+                   (+ (:male-count (first pentades))
+                      (if (> decade 1910)
+                        (:male-count (nth pentades 1))
+                        0))
+                   (+ (:female-count (first pentades))
+                      (if (> decade 1910)
+                        (:female-count (nth pentades 1))
+                        0)))
+        ; divide by the total number of people in the histogram (US population)
+        total (reduce + (map #(if (= sex "male")
+                                (:male-count %)
+                                (:female-count %))
+                             age-histogram))
+        ]
+    (float (/ decaders total))))

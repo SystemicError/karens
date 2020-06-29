@@ -31,3 +31,15 @@
   (testing "read-age-histogram fail."
     (is (= (count (read-age-histogram)) 21))
   ))
+
+(deftest prob-birth-decade-test
+  (testing "prob-birth-decade fail."
+    (let [histogram (read-age-histogram)
+          m-probs (map #(prob-birth-decade histogram % "male") (range 1910 2020 10))
+          f-probs (map #(prob-birth-decade histogram % "female") (range 1910 2020 10))
+          ]
+      (is (< 0 (first m-probs)))
+      (is (> 1 (first m-probs)))
+      (is (> 0.0001 (- 1 (reduce + m-probs))))
+      (is (> 0.0001 (- 1 (reduce + f-probs))))
+      )))
