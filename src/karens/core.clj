@@ -30,26 +30,20 @@
   (apply concat (map read-name-list (range 1900 2020 10))))
 
 (defn read-birth-data
-  "Reads live birth data"
+  "Reads SSA birth totals"
   []
   (let [filename "data/total_births"
         text (slurp filename)
-        decommaed (str/replace text #"," "")
         parse-line (fn [line]
                      (let [fields (str/split line #"\s+")]
-                       {:year (read-string (first fields))
-                        :count (read-string (nth fields 1))
+                       {:decade (read-string (first fields))
+                        :male-count (read-string (nth fields 1))
+                        :female-count (read-string (nth fields 2))
                         }))
-        lines (str/split decommaed #"\n")
+        lines (str/split text #"\n")
         entries (map parse-line lines)
         ]
     entries))
-
-(defn live-births
-  "Give the number of live births in a requested year, interpolating if necessary."
-  [birth-data year]
-  ; uses nearest interpolation (lazy, I know)
-  (:count (apply min-key #(Math/abs (- (:year %) year)) birth-data)))
 
 (defn read-age-histogram
   "Reads age-histogram"
@@ -89,3 +83,13 @@
                              age-histogram))
         ]
     (float (/ decaders total))))
+
+(defn prob-name-given-decade
+  "Give the probability that someone has a given name knowing only the decade of their birth and sex of as evidence."
+  [name-list birth-totals decade sex]
+  (let [name-count (:count (first (filter #(and (= sex (:sex %))
+                                                (= decade (:decade %))) name-list)))
+        entry (first (filter #(= decade (:decade %)) birth-totals))
+        total ((if (= "male" sex) :male :female) entry)
+        ]
+    (/ name-count total)))

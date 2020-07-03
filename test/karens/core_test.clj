@@ -15,16 +15,8 @@
 
 (deftest read-birth-data-test
   (testing "read-birth-data fail."
-    (is (= (count (read-birth-data)) 63))
-  ))
-
-(deftest live-births-test
-  (testing "live-births fail."
-    (is (= (live-births (read-birth-data) 2009) 4131019))
-    (is (= (live-births (read-birth-data) 2010) 4131019))
-    (is (= (live-births (read-birth-data) 2008) 4131019))
-    (is (= (live-births (read-birth-data) 1910) 2777000))
-    (is (= (live-births (read-birth-data) 1900) 2777000))
+    (is (= (count (read-birth-data)) 12))
+    (is (= (:female-count (last (read-birth-data))) 17316359))
   ))
 
 (deftest read-age-histogram-test
