@@ -94,3 +94,20 @@
         total ((if (= "male" sex) :male-count :female-count) entry)
         ]
     (float (/ name-count total))))
+
+(defn prob-birth-name
+  "Give the probability of someone having a given birth name knowing only their sex."
+  [name-list birth-totals age-histogram birth-name sex]
+  (let [
+        ]
+    ))
+
+(defn prob-birth-decade-given-name-and-sex
+  "Compute the probability someone has a given birth decade given only their name and sex.  Account for whether they are alive or dead (i.e., age histograms)."
+  [name-list birth-totals age-histogram decade birth-name sex]
+  (let [; by a Bayesian calculation, P(decade|name) = P(name|decade)*P(decade)/P(name)
+        p-name-given-decade (prob-name-given-birth-decade-and-sex name-list birth-totals birth-name decade sex)
+        p-decade (prob-birth-decade age-histogram decade sex)
+        p-name (prob-birth-name name-list birth-totals age-histogram birth-name sex)
+        ]
+    (/ (* p-name-given-decade p-decade) p-name)))
