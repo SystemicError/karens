@@ -11,6 +11,7 @@
 (deftest read-name-lists-test
   (testing "read-name-lists fail."
     (is (= (count (read-name-lists)) 4800))
+;    (println (str "Name lists:\n" (into [] (read-name-lists))))
   ))
 
 (deftest read-birth-data-test
@@ -35,3 +36,11 @@
       (is (> 0.0001 (- 1 (reduce + m-probs))))
       (is (> 0.0001 (- 1 (reduce + f-probs))))
       )))
+
+(deftest prob-name-given-birth-decade-and-sex-test
+  (testing "prob-name-given-birth-decade-and-sex fail."
+    (let [births (read-birth-data)
+          names (read-name-lists)]
+      (is (= (prob-name-given-birth-decade-and-sex names births "John" 1990 "male")
+             (float (/ 240069 20550214)))))
+    ))

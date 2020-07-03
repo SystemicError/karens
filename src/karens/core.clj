@@ -84,12 +84,13 @@
         ]
     (float (/ decaders total))))
 
-(defn prob-name-given-decade
+(defn prob-name-given-birth-decade-and-sex
   "Give the probability that someone has a given name knowing only the decade of their birth and sex of as evidence."
-  [name-list birth-totals decade sex]
+  [name-list birth-totals birth-name decade sex]
   (let [name-count (:count (first (filter #(and (= sex (:sex %))
+                                                (= birth-name (:name %))
                                                 (= decade (:decade %))) name-list)))
         entry (first (filter #(= decade (:decade %)) birth-totals))
-        total ((if (= "male" sex) :male :female) entry)
+        total ((if (= "male" sex) :male-count :female-count) entry)
         ]
-    (/ name-count total)))
+    (float (/ name-count total))))
