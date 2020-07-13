@@ -93,13 +93,26 @@
         entry (first (filter #(= decade (:decade %)) birth-totals))
         total ((if (= "male" sex) :male-count :female-count) entry)
         ]
-    (float (/ name-count total))))
+    (if (= nil name-count)
+      0
+      (float (/ name-count total)))))
 
 (defn prob-birth-name
   "Give the probability of someone having a given birth name knowing only their sex."
   [name-list birth-totals age-histogram birth-name sex]
-  (let [
+  (let [decades (range 1900 2020 10)
+        ; find the total number of folks with the name and sex, divide by total number of folks with that sex
+        sex-total (reduce + (map (if (= sex "male") :male-count :female-count) age-histogram))
+        ; total number of folks with given name and sex
+          ; survivors with name = survivors in age group * (folks born with name in that decade/folks born in that decade)
+        name-counts (map :count (filter #(and (= (:sex %) sex)
+                                              (= (:name %) birth-name)) name-list))
+        survivor-counts (for [i (range (count name-counts))]
+                          (* (reduce + (map #((if (= sex "male") :male-count :female-count) %) (take 2 (drop i age-histogram))))
+                             (/ (nth name-counts i)
+                                ((if (= sex "male") :male-count :female-count) (nth birth-totals i)))))
         ]
+    (float (/ (reduce + survivor-counts) sex-total))
     ))
 
 (defn prob-birth-decade-given-name-and-sex
@@ -110,4 +123,6 @@
         p-decade (prob-birth-decade age-histogram decade sex)
         p-name (prob-birth-name name-list birth-totals age-histogram birth-name sex)
         ]
-    (/ (* p-name-given-decade p-decade) p-name)))
+    (if (= p-name 0.0)
+      "Insufficient data."
+      (float (/ (* p-name-given-decade p-decade) p-name)))))

@@ -44,3 +44,11 @@
       (is (= (prob-name-given-birth-decade-and-sex names births "John" 1990 "male")
              (float (/ 240069 20550214)))))
     ))
+
+(deftest prob-birth-decade-given-name-and-sex-test
+  (testing "prob-birth-decade-given-name-and-sex fail."
+    (let [births (read-birth-data)
+          names (read-name-lists)
+          age-histogram (read-age-histogram)]
+      (println (str "P(1950s|'Karen',f)=" (prob-birth-decade-given-name-and-sex births names age-histogram 1950 "John" "male")))
+      )))
